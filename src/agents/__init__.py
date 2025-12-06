@@ -28,6 +28,11 @@ from .bond_dynamics_agents import (
     LagTimeDetectorAgent,
     AssetRotationAlertAgent,
 )
+from .volume_seasonality_agents import (
+    MarketVolumeMonitorAgent,
+    SeasonalPatternAgent,
+    VolumeSeasonalSyncAgent,
+)
 
 __all__ = [
     "EconomicCalendarAgent",
@@ -50,4 +55,7 @@ __all__ = [
     "BondFXCorrelationAgent",
     "LagTimeDetectorAgent",
     "AssetRotationAlertAgent",
+    "MarketVolumeMonitorAgent",
+    "SeasonalPatternAgent",
+    "VolumeSeasonalSyncAgent",
 ]

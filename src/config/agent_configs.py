@@ -220,6 +220,44 @@ ASSET_ROTATION_ALERT_CONFIG = AgentConfig(
     tools=["analyze_rotation", "rate_assets", "detect_state_change", "recommend_trades"]
 )
 
+# ===== VOLUME & SEASONALITY GROUP =====
+
+# Market Volume Monitor Agent
+MARKET_VOLUME_MONITOR_CONFIG = AgentConfig(
+    agent_id="market_volume_monitor_01",
+    name="Market Volume Monitor",
+    role=AgentRole.DATA_SCIENTIST,
+    group="volume_seasonality",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["track_volumes", "detect_anomalies", "analyze_participation"]
+)
+
+# Seasonal Pattern Agent
+SEASONAL_PATTERN_CONFIG = AgentConfig(
+    agent_id="seasonal_pattern_01",
+    name="Seasonal Pattern Specialist",
+    role=AgentRole.DATA_SCIENTIST,
+    group="volume_seasonality",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["identify_patterns", "forecast_seasonality", "calendar_analysis"]
+)
+
+# Volume-Seasonal Sync Agent
+VOLUME_SEASONAL_SYNC_CONFIG = AgentConfig(
+    agent_id="volume_seasonal_sync_01",
+    name="Volume-Seasonal Sync",
+    role=AgentRole.ALERT_COORDINATOR,
+    group="volume_seasonality",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["analyze_sync", "identify_anomalies", "recommend_seasonal_trades"]
+)
+
 # Group of all agent configs
 ALL_AGENT_CONFIGS = [
     ECONOMIC_CALENDAR_CONFIG,
@@ -240,6 +278,9 @@ ALL_AGENT_CONFIGS = [
     BOND_FX_CORRELATION_CONFIG,
     LAG_TIME_DETECTOR_CONFIG,
     ASSET_ROTATION_ALERT_CONFIG,
+    MARKET_VOLUME_MONITOR_CONFIG,
+    SEASONAL_PATTERN_CONFIG,
+    VOLUME_SEASONAL_SYNC_CONFIG,
 ]
 
 # Group organization
@@ -273,5 +314,10 @@ AGENT_GROUPS = {
         BOND_FX_CORRELATION_CONFIG,
         LAG_TIME_DETECTOR_CONFIG,
         ASSET_ROTATION_ALERT_CONFIG,
+    ],
+    "volume_seasonality": [
+        MARKET_VOLUME_MONITOR_CONFIG,
+        SEASONAL_PATTERN_CONFIG,
+        VOLUME_SEASONAL_SYNC_CONFIG,
     ],
 }

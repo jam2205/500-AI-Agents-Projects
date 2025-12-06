@@ -67,12 +67,18 @@ Continuous learning and system enhancement
 - 💡 **Hypothesis Generator**: Creates new trading ideas
 - 📚 **Knowledge Refinement**: Consolidates learning, updates rules
 
-### 6. **Bond Dynamics Group** (4 agents) ⭐ NEW
+### 6. **Bond Dynamics Group** (4 agents) ⭐
 Uses short-term bonds as leading indicators for FX moves
 - 📊 **Short-Term Bond Monitor**: Tracks 2Y/3Y yields, momentum, significant moves
 - 🔗 **Bond-FX Correlation**: Monitors correlations with major pairs and crosses
 - ⏱️ **Lag Time Detector**: Measures bond-to-FX reaction lag times, predicts timing
 - 🔄 **Asset Rotation Alert**: Recommends correlated trades, manages rotation
+
+### 7. **Volume & Seasonality Group** (3 agents) ⭐ NEW
+Aligns market volumes with seasonal patterns for trading signals
+- 📊 **Market Volume Monitor**: Tracks volumes across all assets, detects anomalies
+- 📅 **Seasonal Pattern Specialist**: Identifies seasonal effects, forecasts behavior
+- 🔗 **Volume-Seasonal Sync**: Correlates volume with seasonals, generates signals
 
 ## 🚀 Quick Start
 
