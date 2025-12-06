@@ -85,6 +85,10 @@ Aligns market volumes with seasonal patterns for trading signals
 Top-down Wyckoff-based market structure using quarterly timeframe breakdown
 - 📉 **Market Cycle Analyzer**: Detects accumulation/distribution/markup/markdown phases, multi-timeframe alignment, manipulation detection, framework strength assessment
 
+### 9. **Session Openings Group** (1 agent) ⭐ NEW
+Tracks price behavior at critical market session opens across time zones
+- 🌍 **Session Opening Specialist**: Monitors midnight open, London open, NYSE open, PM session, London close; tracks escalating/declining opens; aligns with cycle phases
+
 ## 🚀 Quick Start
 
 ### Installation

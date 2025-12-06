@@ -35,6 +35,7 @@ from .volume_seasonality_agents import (
     TechnicalAnalysisAgent,
 )
 from .market_cycle_agent import MarketCycleAgent
+from .session_opens_agent import SessionOpeningAgent
 
 __all__ = [
     "EconomicCalendarAgent",
@@ -62,4 +63,5 @@ __all__ = [
     "VolumeSeasonalSyncAgent",
     "TechnicalAnalysisAgent",
     "MarketCycleAgent",
+    "SessionOpeningAgent",
 ]

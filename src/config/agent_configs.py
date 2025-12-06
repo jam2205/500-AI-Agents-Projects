@@ -284,6 +284,20 @@ MARKET_CYCLE_CONFIG = AgentConfig(
     tools=["analyze_symbol", "detect_phase_change", "assess_framework", "detect_manipulation"]
 )
 
+# ===== SESSION OPENING ANALYSIS GROUP =====
+
+# Session Opening Agent
+SESSION_OPENING_CONFIG = AgentConfig(
+    agent_id="session_opening_01",
+    name="Session Opening Specialist",
+    role=AgentRole.MARKET_INTELLIGENCE,
+    group="session_opens",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["track_opens", "align_with_cycle", "detect_signals", "get_history"]
+)
+
 # Group of all agent configs
 ALL_AGENT_CONFIGS = [
     ECONOMIC_CALENDAR_CONFIG,
@@ -309,6 +323,7 @@ ALL_AGENT_CONFIGS = [
     VOLUME_SEASONAL_SYNC_CONFIG,
     TECHNICAL_ANALYSIS_CONFIG,
     MARKET_CYCLE_CONFIG,
+    SESSION_OPENING_CONFIG,
 ]
 
 # Group organization
@@ -351,5 +366,8 @@ AGENT_GROUPS = {
     ],
     "market_cycles": [
         MARKET_CYCLE_CONFIG,
+    ],
+    "session_opens": [
+        SESSION_OPENING_CONFIG,
     ],
 }
