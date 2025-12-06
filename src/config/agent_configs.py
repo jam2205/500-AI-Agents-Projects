@@ -298,6 +298,20 @@ SESSION_OPENING_CONFIG = AgentConfig(
     tools=["track_opens", "align_with_cycle", "detect_signals", "get_history"]
 )
 
+# ===== TIME SERIES FORECASTING GROUP =====
+
+# Time Series Forecasting Agent
+TIMESERIES_FORECASTING_CONFIG = AgentConfig(
+    agent_id="timeseries_forecasting_01",
+    name="Time Series Forecasting Coordinator",
+    role=AgentRole.DATA_SCIENTIST,
+    group="timeseries_forecasting",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["forecast_symbol", "ensemble_forecasts", "get_history", "get_stats"]
+)
+
 # Group of all agent configs
 ALL_AGENT_CONFIGS = [
     ECONOMIC_CALENDAR_CONFIG,
@@ -324,6 +338,7 @@ ALL_AGENT_CONFIGS = [
     TECHNICAL_ANALYSIS_CONFIG,
     MARKET_CYCLE_CONFIG,
     SESSION_OPENING_CONFIG,
+    TIMESERIES_FORECASTING_CONFIG,
 ]
 
 # Group organization
@@ -369,5 +384,8 @@ AGENT_GROUPS = {
     ],
     "session_opens": [
         SESSION_OPENING_CONFIG,
+    ],
+    "timeseries_forecasting": [
+        TIMESERIES_FORECASTING_CONFIG,
     ],
 }
