@@ -1,0 +1,43 @@
+# TimesFM Forecasting API Container
+# Google Time Series Foundation Model served via FastAPI
+# Includes S3 bucket support for RunPod.io
+
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY docker/requirements-timesfm.txt requirements.txt
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY src/services/timesfm_api.py .
+COPY src/utils/ ./utils/
+
+# Create data directory for mounted volumes (S3 bucket)
+RUN mkdir -p /data /models
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Default environment variables
+ENV PYTHONUNBUFFERED=1
+ENV LOG_LEVEL=INFO
+ENV MODEL_CACHE_DIR=/models
+ENV DATA_DIR=/data
+
+# Run API
+CMD ["uvicorn", "timesfm_api:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

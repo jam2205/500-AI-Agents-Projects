@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  timesfm-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.timesfm
+    container_name: timesfm-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - MODEL_CACHE_DIR=/models
+      - DATA_DIR=/data
+      # S3 Configuration (set in .env)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - S3_BUCKET=${S3_BUCKET}
+    volumes:
+      - ./data:/data
+      - ./models:/models
+    networks:
+      - trading-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  patchtst-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.patchtst
+    container_name: patchtst-api
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - MODEL_CACHE_DIR=/models
+      - DATA_DIR=/data
+      # S3 Configuration (set in .env)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - S3_BUCKET=${S3_BUCKET}
+    volumes:
+      - ./data:/data
+      - ./models:/models
+    networks:
+      - trading-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    depends_on:
+      - timesfm-api
+
+networks:
+  trading-network:
+    driver: bridge
+
+volumes:
+  data:
+    driver: local
+  models:
+    driver: local
