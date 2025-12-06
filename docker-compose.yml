@@ -63,6 +63,33 @@ services:
     depends_on:
       - timesfm-api
 
+  analytics-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.analytics
+    container_name: analytics-api
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - PORT=8002
+      - HOST=0.0.0.0
+    volumes:
+      - ./data:/data
+    networks:
+      - trading-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    depends_on:
+      - timesfm-api
+      - patchtst-api
+
 networks:
   trading-network:
     driver: bridge
