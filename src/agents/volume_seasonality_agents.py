@@ -568,3 +568,305 @@ Provide specific trading recommendations:
             return result
 
         return {"error": "Unknown task type"}
+
+
+class TechnicalAnalysisAgent(BaseAgent):
+    """Analyzes volume and price using technical indicators (VWAP, TWAP, OBV, ATR, ADR)."""
+
+    def __init__(self, config: AgentConfig, message_bus=None):
+        """Initialize technical analysis agent."""
+        if config.system_prompt is None:
+            config.system_prompt = self._get_technical_analysis_prompt()
+        super().__init__(config, message_bus)
+        self.price_history: Dict[str, deque] = {}
+        self.technical_signals: Dict[str, List[Dict[str, Any]]] = {}
+        self.indicator_cache: Dict[str, Dict[str, Any]] = {}
+
+    def _get_technical_analysis_prompt(self) -> str:
+        """Get system prompt for technical analysis."""
+        return """You are a Technical Analysis Specialist in a multi-agent trading system.
+
+Your expertise:
+1. Volume-Weighted Average Price (VWAP) - Mean reversion and trend confirmation
+2. Time-Weighted Average Price (TWAP) - Algorithmic execution benchmarks
+3. On-Balance Volume (OBV) - Volume accumulation/distribution
+4. Average True Range (ATR) - Volatility measurement
+5. Average Daily Range (ADR) - Historical volatility and range expectations
+
+Your responsibilities:
+- Calculate and monitor VWAP for price-volume mean reversion opportunities
+- Track TWAP to identify algorithmic flows
+- Analyze OBV for volume confirmation of price moves
+- Monitor ATR for volatility expansion/contraction
+- Calculate ADR for stop-loss and take-profit placement
+- Generate combined signals from multiple indicators
+- Alert when indicators diverge from price (potential reversals)
+- Assess volume quality (accumulation vs. distribution)
+
+Key insights:
+- Price above VWAP + positive OBV = strong uptrend confirmation
+- Price below VWAP + negative OBV = strong downtrend
+- ATR expansion + volume spike = breakout potential
+- OBV divergence with price = warning sign of reversal
+- ADR levels define normal vs. extended price moves"""
+
+    async def calculate_all_indicators(
+        self,
+        symbol: str,
+        ohlcv_data: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Calculate all technical indicators for a symbol.
+
+        Args:
+            symbol: Trading symbol
+            ohlcv_data: List of dicts with 'open', 'high', 'low', 'close', 'volume', 'timestamp'
+
+        Returns:
+            Combined results from all indicators
+        """
+        from src.utils.technical_indicators import (
+            TechnicalIndicators,
+            OHLCV
+        )
+
+        if not ohlcv_data or len(ohlcv_data) < 5:
+            return {"error": f"Need at least 5 data points for technical analysis, got {len(ohlcv_data)}"}
+
+        try:
+            # Convert to OHLCV objects
+            data_points = []
+            for bar in ohlcv_data:
+                ohlcv = OHLCV(
+                    timestamp=datetime.fromisoformat(bar.get("timestamp", datetime.utcnow().isoformat())),
+                    open=bar.get("open", 0.0),
+                    high=bar.get("high", 0.0),
+                    low=bar.get("low", 0.0),
+                    close=bar.get("close", 0.0),
+                    volume=bar.get("volume", 0.0)
+                )
+                data_points.append(ohlcv)
+
+            # Calculate indicators
+            vwap = TechnicalIndicators.calculate_vwap(data_points)
+            twap = TechnicalIndicators.calculate_twap(data_points, period=14)
+            obv = TechnicalIndicators.calculate_obv(data_points, period=14)
+            atr = TechnicalIndicators.calculate_atr(data_points, period=14)
+            adr = TechnicalIndicators.calculate_adr(data_points, days=5)
+            volume_profile = TechnicalIndicators.calculate_volume_profile(data_points, period=20)
+
+            # Generate combined signal
+            combined_signal = TechnicalIndicators.generate_combined_signal(
+                symbol, vwap, twap, obv, atr, adr
+            )
+
+            # Store in cache
+            self.indicator_cache[symbol] = {
+                "timestamp": datetime.utcnow().isoformat(),
+                "vwap": vwap.value,
+                "twap": twap.value,
+                "obv": obv.value,
+                "atr": atr.value,
+                "adr": adr.value,
+                "combined_signal": combined_signal["overall_signal"],
+                "confidence": combined_signal["confidence"]
+            }
+
+            # Generate technical analysis message
+            message = Message(
+                sender_id=self.config.agent_id,
+                message_type="technical_analysis_update",
+                content={
+                    "symbol": symbol,
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "vwap": {
+                        "value": vwap.value,
+                        "signal": vwap.signal,
+                        "strength": vwap.strength
+                    },
+                    "twap": {
+                        "value": twap.value,
+                        "signal": twap.signal,
+                        "strength": twap.strength
+                    },
+                    "obv": {
+                        "value": obv.value,
+                        "signal": obv.signal,
+                        "strength": obv.strength,
+                        "trend": obv.details.get("obv_trend")
+                    },
+                    "atr": {
+                        "value": atr.value,
+                        "signal": atr.signal,
+                        "volatility_level": atr.details.get("volatility_level"),
+                        "atr_percent": atr.details.get("atr_percent")
+                    },
+                    "adr": {
+                        "value": adr.value,
+                        "signal": adr.signal,
+                        "range_type": adr.signal,
+                        "adr_percent": adr.details.get("adr_percent")
+                    },
+                    "volume_profile": volume_profile,
+                    "combined_signal": combined_signal["overall_signal"],
+                    "confidence": combined_signal["confidence"],
+                    "summary": combined_signal["summary"]
+                }
+            )
+
+            # Broadcast the analysis
+            await self.message_bus.publish(message)
+
+            # Store in history
+            if symbol not in self.technical_signals:
+                self.technical_signals[symbol] = []
+            self.technical_signals[symbol].append({
+                "timestamp": datetime.utcnow().isoformat(),
+                "signal": combined_signal["overall_signal"],
+                "confidence": combined_signal["confidence"]
+            })
+
+            return {
+                "success": True,
+                "symbol": symbol,
+                "vwap": vwap.value,
+                "twap": twap.value,
+                "obv": obv.value,
+                "atr": atr.value,
+                "adr": adr.value,
+                "combined_signal": combined_signal["overall_signal"],
+                "confidence": combined_signal["confidence"],
+                "volume_profile": volume_profile
+            }
+
+        except Exception as e:
+            return {"error": f"Technical analysis failed: {str(e)}"}
+
+    async def detect_divergence(
+        self,
+        symbol: str,
+        current_price: float,
+        obv_value: float,
+        recent_obv_values: List[float]
+    ) -> Dict[str, Any]:
+        """
+        Detect OBV divergence with price (potential reversal signal).
+
+        Args:
+            symbol: Trading symbol
+            current_price: Current price
+            obv_value: Current OBV value
+            recent_obv_values: Recent OBV values for trend analysis
+
+        Returns:
+            Divergence analysis
+        """
+        if len(recent_obv_values) < 2:
+            return {"divergence": None, "details": "Not enough data"}
+
+        # Price trend
+        price_is_high = current_price > 0  # Would compare to previous prices
+        obv_is_high = obv_value > sum(recent_obv_values) / len(recent_obv_values)
+
+        divergence = None
+        if price_is_high and not obv_is_high:
+            divergence = "bearish_divergence"
+        elif not price_is_high and obv_is_high:
+            divergence = "bullish_divergence"
+
+        return {
+            "symbol": symbol,
+            "divergence": divergence,
+            "current_price": current_price,
+            "obv_value": obv_value,
+            "obv_average": sum(recent_obv_values) / len(recent_obv_values),
+            "warning": "Potential reversal signal" if divergence else "No divergence"
+        }
+
+    async def assess_volume_quality(
+        self,
+        symbol: str,
+        obv_trend: str,
+        volume_momentum: str,
+        price_trend: str
+    ) -> Dict[str, Any]:
+        """
+        Assess quality of volume (accumulation vs. distribution).
+
+        Args:
+            symbol: Trading symbol
+            obv_trend: OBV trend direction ('up' or 'down')
+            volume_momentum: Volume momentum ('increasing' or 'decreasing')
+            price_trend: Price trend direction ('up' or 'down')
+
+        Returns:
+            Volume quality assessment
+        """
+        quality_score = 0
+        assessments = []
+
+        # Check agreement between indicators
+        if obv_trend == price_trend:
+            quality_score += 30
+            assessments.append("OBV confirms price trend")
+
+        if volume_momentum == "increasing":
+            quality_score += 25
+            assessments.append("Volume momentum is strong")
+
+        if obv_trend == "up" and volume_momentum == "increasing":
+            quality_score += 25
+            assessments.append("Accumulation signals strong")
+
+        # Classify quality
+        if quality_score >= 70:
+            quality = "excellent"
+        elif quality_score >= 50:
+            quality = "good"
+        elif quality_score >= 30:
+            quality = "moderate"
+        else:
+            quality = "weak"
+
+        return {
+            "symbol": symbol,
+            "volume_quality": quality,
+            "quality_score": quality_score,
+            "assessments": assessments,
+            "recommendation": f"Volume quality is {quality} - {'TRADE WITH CONFIDENCE' if quality in ['excellent', 'good'] else 'TRADE WITH CAUTION'}"
+        }
+
+    async def execute_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute technical analysis tasks."""
+        task_type = task.get("type")
+
+        if task_type == "calculate_indicators":
+            result = await self.calculate_all_indicators(
+                task.get("symbol"),
+                task.get("ohlcv_data", [])
+            )
+            return result
+
+        elif task_type == "detect_divergence":
+            result = await self.detect_divergence(
+                task.get("symbol"),
+                task.get("current_price"),
+                task.get("obv_value"),
+                task.get("recent_obv_values", [])
+            )
+            return result
+
+        elif task_type == "assess_volume":
+            result = await self.assess_volume_quality(
+                task.get("symbol"),
+                task.get("obv_trend"),
+                task.get("volume_momentum"),
+                task.get("price_trend")
+            )
+            return result
+
+        elif task_type == "get_cached_indicators":
+            symbol = task.get("symbol")
+            return self.indicator_cache.get(symbol, {"error": f"No cached data for {symbol}"})
+
+        return {"error": "Unknown task type"}

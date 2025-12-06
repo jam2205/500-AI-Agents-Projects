@@ -32,6 +32,7 @@ from .volume_seasonality_agents import (
     MarketVolumeMonitorAgent,
     SeasonalPatternAgent,
     VolumeSeasonalSyncAgent,
+    TechnicalAnalysisAgent,
 )
 
 __all__ = [
@@ -58,4 +59,5 @@ __all__ = [
     "MarketVolumeMonitorAgent",
     "SeasonalPatternAgent",
     "VolumeSeasonalSyncAgent",
+    "TechnicalAnalysisAgent",
 ]

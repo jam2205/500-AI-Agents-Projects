@@ -258,6 +258,18 @@ VOLUME_SEASONAL_SYNC_CONFIG = AgentConfig(
     tools=["analyze_sync", "identify_anomalies", "recommend_seasonal_trades"]
 )
 
+# Technical Analysis Agent
+TECHNICAL_ANALYSIS_CONFIG = AgentConfig(
+    agent_id="technical_analysis_01",
+    name="Technical Analysis Specialist",
+    role=AgentRole.DATA_SCIENTIST,
+    group="volume_seasonality",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["calculate_vwap", "calculate_twap", "calculate_obv", "calculate_atr", "calculate_adr", "detect_divergence", "assess_volume_quality"]
+)
+
 # Group of all agent configs
 ALL_AGENT_CONFIGS = [
     ECONOMIC_CALENDAR_CONFIG,
@@ -281,6 +293,7 @@ ALL_AGENT_CONFIGS = [
     MARKET_VOLUME_MONITOR_CONFIG,
     SEASONAL_PATTERN_CONFIG,
     VOLUME_SEASONAL_SYNC_CONFIG,
+    TECHNICAL_ANALYSIS_CONFIG,
 ]
 
 # Group organization
@@ -319,5 +332,6 @@ AGENT_GROUPS = {
         MARKET_VOLUME_MONITOR_CONFIG,
         SEASONAL_PATTERN_CONFIG,
         VOLUME_SEASONAL_SYNC_CONFIG,
+        TECHNICAL_ANALYSIS_CONFIG,
     ],
 }
