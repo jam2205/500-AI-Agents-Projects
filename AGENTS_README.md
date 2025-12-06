@@ -74,11 +74,16 @@ Uses short-term bonds as leading indicators for FX moves
 - ⏱️ **Lag Time Detector**: Measures bond-to-FX reaction lag times, predicts timing
 - 🔄 **Asset Rotation Alert**: Recommends correlated trades, manages rotation
 
-### 7. **Volume & Seasonality Group** (3 agents) ⭐ NEW
+### 7. **Volume & Seasonality Group** (4 agents) ⭐ NEW
 Aligns market volumes with seasonal patterns for trading signals
 - 📊 **Market Volume Monitor**: Tracks volumes across all assets, detects anomalies
 - 📅 **Seasonal Pattern Specialist**: Identifies seasonal effects, forecasts behavior
 - 🔗 **Volume-Seasonal Sync**: Correlates volume with seasonals, generates signals
+- 📈 **Technical Analysis Specialist**: VWAP/TWAP/OBV/ATR/ADR indicators, divergence detection
+
+### 8. **Market Cycle Analysis Group** (1 agent) ⭐ FRAMEWORK
+Top-down Wyckoff-based market structure using quarterly timeframe breakdown
+- 📉 **Market Cycle Analyzer**: Detects accumulation/distribution/markup/markdown phases, multi-timeframe alignment, manipulation detection, framework strength assessment
 
 ## 🚀 Quick Start
 

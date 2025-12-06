@@ -270,6 +270,20 @@ TECHNICAL_ANALYSIS_CONFIG = AgentConfig(
     tools=["calculate_vwap", "calculate_twap", "calculate_obv", "calculate_atr", "calculate_adr", "detect_divergence", "assess_volume_quality"]
 )
 
+# ===== MARKET CYCLE ANALYSIS GROUP =====
+
+# Market Cycle Agent
+MARKET_CYCLE_CONFIG = AgentConfig(
+    agent_id="market_cycle_01",
+    name="Market Cycle Analyzer",
+    role=AgentRole.DATA_SCIENTIST,
+    group="market_cycles",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["analyze_symbol", "detect_phase_change", "assess_framework", "detect_manipulation"]
+)
+
 # Group of all agent configs
 ALL_AGENT_CONFIGS = [
     ECONOMIC_CALENDAR_CONFIG,
@@ -294,6 +308,7 @@ ALL_AGENT_CONFIGS = [
     SEASONAL_PATTERN_CONFIG,
     VOLUME_SEASONAL_SYNC_CONFIG,
     TECHNICAL_ANALYSIS_CONFIG,
+    MARKET_CYCLE_CONFIG,
 ]
 
 # Group organization
@@ -333,5 +348,8 @@ AGENT_GROUPS = {
         SEASONAL_PATTERN_CONFIG,
         VOLUME_SEASONAL_SYNC_CONFIG,
         TECHNICAL_ANALYSIS_CONFIG,
+    ],
+    "market_cycles": [
+        MARKET_CYCLE_CONFIG,
     ],
 }
