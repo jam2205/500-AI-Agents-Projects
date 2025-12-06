@@ -67,6 +67,13 @@ Continuous learning and system enhancement
 - 💡 **Hypothesis Generator**: Creates new trading ideas
 - 📚 **Knowledge Refinement**: Consolidates learning, updates rules
 
+### 6. **Bond Dynamics Group** (4 agents) ⭐ NEW
+Uses short-term bonds as leading indicators for FX moves
+- 📊 **Short-Term Bond Monitor**: Tracks 2Y/3Y yields, momentum, significant moves
+- 🔗 **Bond-FX Correlation**: Monitors correlations with major pairs and crosses
+- ⏱️ **Lag Time Detector**: Measures bond-to-FX reaction lag times, predicts timing
+- 🔄 **Asset Rotation Alert**: Recommends correlated trades, manages rotation
+
 ## 🚀 Quick Start
 
 ### Installation

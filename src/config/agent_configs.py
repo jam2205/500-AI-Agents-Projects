@@ -170,6 +170,56 @@ KNOWLEDGE_REFINEMENT_CONFIG = AgentConfig(
     tools=["consolidate_learning", "update_knowledge_base", "generate_rules"]
 )
 
+# ===== SHORT-TERM BOND DYNAMICS GROUP =====
+
+# Short-Term Bond Monitor Agent
+SHORT_TERM_BOND_MONITOR_CONFIG = AgentConfig(
+    agent_id="short_term_bond_monitor_01",
+    name="Short-Term Bond Monitor",
+    role=AgentRole.BOND_ANALYST,
+    group="bond_dynamics",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["track_2y_3y_yields", "detect_momentum", "identify_significant_moves"]
+)
+
+# Bond-FX Correlation Agent
+BOND_FX_CORRELATION_CONFIG = AgentConfig(
+    agent_id="bond_fx_correlation_01",
+    name="Bond-FX Correlation Monitor",
+    role=AgentRole.FOREX_SPECIALIST,
+    group="bond_dynamics",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["monitor_correlations", "detect_breaks", "correlation_analysis"]
+)
+
+# Lag Time Detector Agent
+LAG_TIME_DETECTOR_CONFIG = AgentConfig(
+    agent_id="lag_time_detector_01",
+    name="Lag Time Detector",
+    role=AgentRole.FOREX_SPECIALIST,
+    group="bond_dynamics",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.6,
+    max_tokens=2048,
+    tools=["measure_lag_times", "detect_lag_changes", "predict_timing"]
+)
+
+# Asset Rotation Alert Agent
+ASSET_ROTATION_ALERT_CONFIG = AgentConfig(
+    agent_id="asset_rotation_alert_01",
+    name="Asset Rotation Specialist",
+    role=AgentRole.QUANT_TRADER,
+    group="bond_dynamics",
+    model="claude-3-5-sonnet-20241022",
+    temperature=0.7,
+    max_tokens=2048,
+    tools=["analyze_rotation", "rate_assets", "detect_state_change", "recommend_trades"]
+)
+
 # Group of all agent configs
 ALL_AGENT_CONFIGS = [
     ECONOMIC_CALENDAR_CONFIG,
@@ -186,6 +236,10 @@ ALL_AGENT_CONFIGS = [
     PERFORMANCE_ANALYST_CONFIG,
     HYPOTHESIS_GENERATOR_CONFIG,
     KNOWLEDGE_REFINEMENT_CONFIG,
+    SHORT_TERM_BOND_MONITOR_CONFIG,
+    BOND_FX_CORRELATION_CONFIG,
+    LAG_TIME_DETECTOR_CONFIG,
+    ASSET_ROTATION_ALERT_CONFIG,
 ]
 
 # Group organization
@@ -213,5 +267,11 @@ AGENT_GROUPS = {
         PERFORMANCE_ANALYST_CONFIG,
         HYPOTHESIS_GENERATOR_CONFIG,
         KNOWLEDGE_REFINEMENT_CONFIG,
+    ],
+    "bond_dynamics": [
+        SHORT_TERM_BOND_MONITOR_CONFIG,
+        BOND_FX_CORRELATION_CONFIG,
+        LAG_TIME_DETECTOR_CONFIG,
+        ASSET_ROTATION_ALERT_CONFIG,
     ],
 }

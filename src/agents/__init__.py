@@ -22,6 +22,12 @@ from .improvement_agents import (
     HypothesisGeneratorAgent,
     KnowledgeRefinementAgent,
 )
+from .bond_dynamics_agents import (
+    ShortTermBondMonitorAgent,
+    BondFXCorrelationAgent,
+    LagTimeDetectorAgent,
+    AssetRotationAlertAgent,
+)
 
 __all__ = [
     "EconomicCalendarAgent",
@@ -40,4 +46,8 @@ __all__ = [
     "PerformanceAnalystAgent",
     "HypothesisGeneratorAgent",
     "KnowledgeRefinementAgent",
+    "ShortTermBondMonitorAgent",
+    "BondFXCorrelationAgent",
+    "LagTimeDetectorAgent",
+    "AssetRotationAlertAgent",
 ]
